@@ -1,7 +1,7 @@
 import { NuvoRoute } from "@nuvolo/nuux/components/NuvoApp";
 import {
   ProductHomeView,
-  ProductCreateView,
+  ProductAddView,
   ProductEditView,
   ProductDetailsView,
   WalletView,
@@ -14,9 +14,9 @@ const Routes: NuvoRoute[] = [
     name: "PRODUCTS_HOME_VIEW",
   },
   {
-    path: "/create",
-    component: ProductCreateView,
-    name: "PRODUCT_CREATE_VIEW",
+    path: "/add",
+    component: ProductAddView,
+    name: "PRODUCT_ADD_VIEW",
   },
   {
     path: "/edit/:id",

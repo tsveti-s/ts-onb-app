@@ -10,13 +10,7 @@ import {
 import { NuvoThrobber } from "@nuvolo/nuux/components/NuvoThrobber";
 import { getAllProducts, deleteProduct } from "src/services/productService";
 import { ColumnType } from "src/types/columnTypes";
-
-const Container = styled.div`
-  height: 100%;
-  display: flex;
-  padding: 20px;
-  flex-direction: column;
-`;
+import { useHistory } from "react-router-dom";
 
 const DataGrid = styled(NuvoDataGrid)`
   .dx-data-row .highlightedCell {
@@ -51,6 +45,7 @@ const columnMap: ColumnType[] = [
 ];
 
 export const ProductHome = (): JSX.Element => {
+  const history = useHistory();
   const [tableData, setTableData] = useState(null);
 
   useEffect(() => {
@@ -68,40 +63,40 @@ export const ProductHome = (): JSX.Element => {
     }
   };
 
-  const handleRowClicked = () => {
-    console.log("Row is clicked!");
+  const handleRowClicked = (e: any) => {
+    if (e.data.id) {
+      history.push(`/edit/${e.data.id}`);
+    }
   };
 
   return !tableData ? (
     <NuvoThrobber size="large" />
   ) : (
-    <Container>
-      <DataGrid
-        keyExpr="id"
-        showBorders
-        columnAutoWidth
-        repaintChangesOnly
-        onRowRemoving={handleRowRemoved}
-        onRowClick={handleRowClicked}
-        dataSource={tableData as any}
-      >
-        <FilterRow visible />
-        <HeaderFilter allowSearch visible />
-        <Editing allowDeleting confirmDelete />
-        {columnMap.map((c: ColumnType, index: number) => (
-          <Column
-            key={index}
-            groupIndex={c.groupIndex}
-            caption={c.columnLabel}
-            dataField={c.columnName}
-            dataType={c.columnType}
-            visible={c.visible}
-            format={c.format}
-            cssClass={c.cssClass}
-            alignment={c.alignment}
-          />
-        ))}
-      </DataGrid>
-    </Container>
+    <DataGrid
+      keyExpr="id"
+      showBorders
+      columnAutoWidth
+      repaintChangesOnly
+      onRowRemoving={handleRowRemoved}
+      onRowClick={handleRowClicked}
+      dataSource={tableData as any}
+    >
+      <FilterRow visible />
+      <HeaderFilter allowSearch visible />
+      <Editing allowDeleting confirmDelete />
+      {columnMap.map((c: ColumnType, index: number) => (
+        <Column
+          key={index}
+          groupIndex={c.groupIndex}
+          caption={c.columnLabel}
+          dataField={c.columnName}
+          dataType={c.columnType}
+          visible={c.visible}
+          format={c.format}
+          cssClass={c.cssClass}
+          alignment={c.alignment}
+        />
+      ))}
+    </DataGrid>
   );
 };

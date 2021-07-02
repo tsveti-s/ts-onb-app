@@ -5,6 +5,7 @@ import NuvoAppProviders from "@nuvolo/nuux/components/NuvoAppProviders";
 import { AppBar } from "@components/AppBar";
 import { NuvoRoute } from "@nuvolo/nuux/components/NuvoApp";
 import { getRoutes } from "@routes/index";
+import { withRouter } from "react-router";
 
 const ContentContainer = styled.div`
   flex-grow: 1;
@@ -13,9 +14,10 @@ const ContentContainer = styled.div`
 
 const LayoutRouter = (): JSX.Element => {
   const routes: NuvoRoute[] = getRoutes();
+  const NavBar = withRouter(AppBar as any);
   return (
     <Router>
-      <AppBar />
+      <NavBar />
       <ContentContainer>
         <Switch>
           {routes.map((route, index) => {
