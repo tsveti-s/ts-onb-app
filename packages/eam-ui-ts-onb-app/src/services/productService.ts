@@ -21,11 +21,11 @@ const getAllProducts = (
     setTableData(response);
   })();
 
-const deleteProduct = (id: string, getProducts: Function) => {
+const deleteProduct = (id: string, handleReaload: Function) => {
   Http.del(`api/x_nuvo_eam_ts_onb/tsveti_onboarding_store/product/delete/${id}`)
     .then((response) => {
       console.warn(`successfully deleted product!`);
-      getProducts();
+      handleReaload();
     })
     .catch((error) => {
       console.warn(`error while deleting product ${error}`);

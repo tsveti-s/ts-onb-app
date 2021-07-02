@@ -50,7 +50,7 @@ const columnMap: ColumnType[] = [
   },
 ];
 
-export const ProductTable = (): JSX.Element => {
+export const ProductHome = (): JSX.Element => {
   const [tableData, setTableData] = useState(null);
 
   useEffect(() => {
@@ -63,7 +63,6 @@ export const ProductTable = (): JSX.Element => {
   };
 
   const handleRowRemoved = (e: any) => {
-    console.log("Row is removed!", e.data.id);
     if (e.data.id) {
       deleteProduct(e.data.id, handleReload);
     }
