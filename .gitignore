@@ -1,0 +1,14 @@
+.env
+node_modules
+**/dist/script.js
+**/sys_ui_script/**/*.png
+**/dist/**
+**/sys_ui_script/**/*.png
+**/sys_ui_script/**/*.gif
+autocomplete/
+jsconfig.json
+.DS_Store
+!index.html
+coverage
+junit.xml
+.idea/

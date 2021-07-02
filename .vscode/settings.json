@@ -1,0 +1,5 @@
+{
+    "eslint.workingDirectories": [
+      "packages/eam-ui-ts-onb-app"
+    ]
+}
