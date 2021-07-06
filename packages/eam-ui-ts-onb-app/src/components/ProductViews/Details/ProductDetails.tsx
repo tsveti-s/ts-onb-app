@@ -1,13 +1,35 @@
-import React, { useState } from "react";
+import { NuvoThrobber } from "@nuvolo/nuux/components/NuvoThrobber";
+import { DETAILS_ROUTE } from "@utils/constants";
+import React, { useState, useEffect } from "react";
+import { useHistory } from "react-router-dom";
 import { ProductForm } from "src/components/ProductViews/Form/ProductForm";
+import { buyProduct, getCurrentProduct } from "src/services/productService";
 
 export const ProductDetails = (): JSX.Element => {
-  return (
+  const [current, setCurrent] = useState(null as any);
+  const history = useHistory();
+  const id = history.location.pathname.replace(DETAILS_ROUTE, "");
+
+  useEffect(() => {
+    getCurrentProduct(id, setCurrent);
+  }, []);
+
+  const handleReload = (): void => {
+    history.push("/");
+  };
+
+  const handleBuyButton = () => {
+    buyProduct(current.id, handleReload);
+  };
+
+  return !current ? (
+    <NuvoThrobber size="large" />
+  ) : (
     <ProductForm
+      payload={current}
       label={"Buy Product"}
-      handleButton={() => console.log("hi")}
-      handleFieldDataChanged={() => console.log("hi")}
-      isButtonEnabled={true}
+      handleButton={handleBuyButton}
+      isButtonEnabled={current ? current.quantity > 0 : false}
       areFieldsDisabled={true}
     />
   );

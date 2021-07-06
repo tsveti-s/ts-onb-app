@@ -69,6 +69,15 @@ export const ProductHome = (): JSX.Element => {
     }
   };
 
+  const mapPrice = (data: any) => {
+    return data.map((product: any) => {
+      product.price = `${Number(product.price.amount).toFixed(2)} ${
+        product.price.currency
+      }`;
+      return product;
+    });
+  };
+
   return !tableData ? (
     <NuvoThrobber size="large" />
   ) : (
@@ -79,7 +88,7 @@ export const ProductHome = (): JSX.Element => {
       repaintChangesOnly
       onRowRemoving={handleRowRemoved}
       onRowClick={handleRowClicked}
-      dataSource={tableData as any}
+      dataSource={mapPrice(tableData as any)}
     >
       <FilterRow visible />
       <HeaderFilter allowSearch visible />
