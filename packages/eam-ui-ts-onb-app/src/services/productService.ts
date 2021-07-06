@@ -39,7 +39,6 @@ const getAllProducts = (
   })();
 
 const deleteProduct = (id: string, handleReaload: Function) => {
-  console.log(id);
   Http.del(`api/x_nuvo_eam_ts_onb/tsveti_onboarding_store/product/delete/${id}`)
     .then((response) => {
       console.warn(`successfully deleted product!`);

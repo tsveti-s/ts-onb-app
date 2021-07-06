@@ -6,10 +6,12 @@ import { useNuvoMessages } from "@nuvolo/nuux/hooks/useNuvoMessages";
 import { appTitleKey, DETAILS_ROUTE, EDIT_ROUTE } from "@utils/constants";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import Add from "@material-ui/icons/Add";
+import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
 import { NuvoNavButton } from "@nuvolo/nuux/components/NuvoIconButton";
 import { useEffect } from "react";
 import { AppBarProps } from "src/types/appBarType";
 import { ToggleRoute } from "@components/ToggleRoute/ToggleRoute";
+import { getWallet } from "src/services/walletService";
 
 const Container = styled.nav`
   display: flex;
@@ -37,6 +39,19 @@ const Button = styled(NuvoNavButton)`
   }
 `;
 
+const WalletContainer = styled.div`
+  width: 50%;
+`;
+
+const WalletText = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  height: 40px;
+  margin-left: 10px;
+`;
+
 const backBtnStyles = { justifyContent: "flex-start" };
 const addBtnStyles = { justifyContent: "flex-end", flexGrow: "1" };
 
@@ -44,8 +59,11 @@ const Content = ({
   title,
   onBackPress,
   onAddProduct,
+  onWalletPress,
   isHomePage,
+  isWalletView,
   isEditOrDetails,
+  wallet,
 }: any): JSX.Element => {
   return (
     <NavBar>
@@ -59,7 +77,24 @@ const Content = ({
           />
         </Container>
       ) : null}
-      <NuvoAppBarTitle>{title}</NuvoAppBarTitle>
+      {wallet ? (
+        <>
+          <NuvoAppBarTitle>Hello, {wallet.user}!</NuvoAppBarTitle>
+          {!isWalletView && (
+            <WalletContainer>
+              <WalletText>
+                <Button
+                  label="balance"
+                  icon={AccountBalanceWalletIcon}
+                  onClick={onWalletPress}
+                  visible={!!onWalletPress}
+                />
+                {wallet.balance.amount} {wallet.balance.currency}
+              </WalletText>
+            </WalletContainer>
+          )}
+        </>
+      ) : null}
       {isHomePage ? (
         <Container style={addBtnStyles as any}>
           <Button
@@ -80,11 +115,23 @@ export const AppBar = (props: AppBarProps): JSX.Element => {
   const msg = useNuvoMessages();
   const { history, location } = props;
   const { pathname } = location;
+  const [wallet, setWallet] = useState(null as any);
   const [isHomePage, setIsHomePage] = useState(pathname === "/");
   const [isEditOrDetails, setIsEditOrDetails] = useState(false);
+  const [isWallet, setIsWallet] = useState(false);
+
+  useEffect(() => {
+    getWallet(setWallet);
+  }, []);
 
   useEffect(() => {
     setIsHomePage(pathname === "/");
+    setIsWallet(pathname === "/wallet");
+
+    if (pathname === "/") {
+      getWallet(setWallet);
+    }
+
     setIsEditOrDetails(
       pathname
         ? pathname.includes(EDIT_ROUTE) || pathname.includes(DETAILS_ROUTE)
@@ -100,6 +147,14 @@ export const AppBar = (props: AppBarProps): JSX.Element => {
     history.push("/add");
   };
 
+  const handleWalletClick = () => {
+    history.push("/wallet");
+  };
+
+  if (wallet?.balance) {
+    wallet.balance.amount = Number(wallet.balance.amount).toFixed(2);
+  }
+
   return (
     <NuvoAppBar
       width="100%"
@@ -107,9 +162,12 @@ export const AppBar = (props: AppBarProps): JSX.Element => {
         <Content
           isHomePage={isHomePage}
           isEditOrDetails={isEditOrDetails}
+          isWalletView={isWallet}
           title={msg.get(appTitleKey)}
           onBackPress={handleBackPress}
           onAddProduct={handleAddProduct}
+          onWalletPress={handleWalletClick}
+          wallet={wallet}
         />
       }
     />

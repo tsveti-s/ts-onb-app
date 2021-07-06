@@ -20,6 +20,7 @@ export const ProductEdit = (): JSX.Element => {
   }, []);
 
   const handleUpdateButton = () => {
+    setIsFieldChanged(false);
     updateProduct(id, current, handleReload);
   };
 

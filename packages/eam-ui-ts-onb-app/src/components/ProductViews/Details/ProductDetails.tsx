@@ -7,6 +7,7 @@ import { buyProduct, getCurrentProduct } from "src/services/productService";
 
 export const ProductDetails = (): JSX.Element => {
   const [current, setCurrent] = useState(null as any);
+  const [isBought, setIsBought] = useState(true);
   const history = useHistory();
   const id = history.location.pathname.replace(DETAILS_ROUTE, "");
 
@@ -19,6 +20,7 @@ export const ProductDetails = (): JSX.Element => {
   };
 
   const handleBuyButton = () => {
+    setIsBought(false);
     buyProduct(current.id, handleReload);
   };
 
@@ -29,7 +31,7 @@ export const ProductDetails = (): JSX.Element => {
       payload={current}
       label={"Buy Product"}
       handleButton={handleBuyButton}
-      isButtonEnabled={current ? current.quantity > 0 : false}
+      isButtonEnabled={isBought && current ? current.quantity > 0 : false}
       areFieldsDisabled={true}
     />
   );

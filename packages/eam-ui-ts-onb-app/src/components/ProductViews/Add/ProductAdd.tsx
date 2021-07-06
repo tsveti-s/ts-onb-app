@@ -45,7 +45,6 @@ export const ProductAdd = (): JSX.Element => {
       } as any;
     }
 
-    console.log(payloadBuffer.current);
     payload.current = {
       ...payload.current,
       ...payloadBuffer.current,
