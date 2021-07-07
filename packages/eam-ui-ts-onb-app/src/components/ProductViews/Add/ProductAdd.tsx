@@ -1,10 +1,13 @@
-import React, { useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import styled from "styled-components";
 import { NuvoUpload } from "@nuvolo/nuux/components/NuvoUpload";
 import { ProductForm } from "src/components/ProductViews/Form/ProductForm";
 import { useHistory } from "react-router-dom";
-import { createProduct } from "src/services/productService";
+import { createProduct, updateProduct } from "src/services/productService";
 import { Product } from "src/types/productType";
+import { useState } from "react";
+import { uploadAttachment } from "src/services/attachmentService";
+import { Attachment } from "src/types/attachmentType";
 
 const Upload = styled(NuvoUpload)`
   margin-top: 20px;
@@ -21,6 +24,9 @@ export const ProductAdd = (): JSX.Element => {
   const history = useHistory();
   const payload = useRef({} as Product);
   const payloadBuffer = useRef({} as any);
+  const [isFieldChanged, setIsFieldChanged] = useState(false as boolean);
+  const [file, setFile] = useState([] as any);
+  const [currentTest, setCurrentTest] = useState(null as any);
   const PRICE_PREFIX = "price.";
 
   const handleFieldDataChanged = (e: any) => {
@@ -49,36 +55,58 @@ export const ProductAdd = (): JSX.Element => {
       ...payload.current,
       ...payloadBuffer.current,
     };
-  };
 
-  const handleFileUpload = () => {};
+    if (!isFieldChanged) {
+      setIsFieldChanged(true);
+    }
+  };
 
   const handleReload = (): void => {
     history.push("/");
   };
 
-  const handleSaveFile = () => {
-    createProduct(payload.current, handleReload);
+  const handleSaveFile = useCallback(() => {
+    setIsFieldChanged(false);
+
+    createProduct(payload.current, handleReload, async (current: Product) => {
+      if (current && file && file.length) {
+        await setFile(
+          uploadAttachment(current.id, file, (attachedFile: Attachment) => {
+            updateProduct(current.id, {
+              ...current,
+              image: attachedFile.sys_id,
+            });
+          })
+        );
+      }
+    });
+  }, [file, currentTest]);
+
+  const handleValueChanged = (e: any) => {
+    const files = e.value;
+    if (files && files.length) {
+      setFile(files);
+    }
   };
 
   return (
     <>
       <Upload
-        // value={file || []}
+        value={file && !file.then ? (file as File[]) : [] || []}
         chunkSize={400000}
         accept="*"
         multiple={false}
         readyToUploadMessage="Uploaded"
         selectButtonText="Select File"
-        uploadMode="useButtons"
+        uploadMode="useForm"
         uploadType="Advance"
-        onValueChanged={handleFileUpload}
+        onValueChanged={handleValueChanged}
       />
       <ProductForm
         label={"Add Product"}
         handleButton={handleSaveFile}
         handleFieldDataChanged={handleFieldDataChanged}
-        isButtonEnabled={true}
+        isButtonEnabled={isFieldChanged}
         areFieldsDisabled={false}
       />
     </>

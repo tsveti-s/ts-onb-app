@@ -16,14 +16,20 @@ const fetchProducts = () => {
 
 const getCurrentProduct = (
   id: string,
-  setCurrent: React.Dispatch<React.SetStateAction<null>>
+  setCurrent: React.Dispatch<React.SetStateAction<null>>,
+  setImg?: Function
 ) => {
   Http.get(
     `api/x_nuvo_eam_ts_onb/tsveti_onboarding_store/product/getCurrent/${id}`
   )
     .then((response) => {
       console.warn(`successfully get product!`);
-      setCurrent(JSON.parse(response?.data.result));
+      const current = JSON.parse(response?.data.result);
+      setCurrent(current);
+
+      if (setImg) {
+        setImg(current);
+      }
     })
     .catch((error) => {
       console.warn(`error while getting product ${error}`);
@@ -52,7 +58,7 @@ const deleteProduct = (id: string, handleReaload: Function) => {
 const updateProduct = (
   id: string,
   payload: Product,
-  handleReload: Function
+  handleReload?: Function
 ) => {
   Http.put(
     `api/x_nuvo_eam_ts_onb/tsveti_onboarding_store/product/update/${id}`,
@@ -60,20 +66,31 @@ const updateProduct = (
   )
     .then((response) => {
       console.warn(`successfully updated product!`);
-      handleReload();
+      if (handleReload) {
+        handleReload();
+      }
     })
     .catch((error) => {
       console.warn(`error while updating product ${error}`);
     });
 };
 
-const createProduct = (payload: Product, handleReload: Function) => {
+const createProduct = (
+  payload: Product,
+  handleReload: Function,
+  uploadFile?: Function
+) => {
   Http.post(
     `api/x_nuvo_eam_ts_onb/tsveti_onboarding_store/product/create`,
     payload
   )
     .then((response) => {
       console.warn(`successfully updated product!`);
+
+      if (uploadFile) {
+        uploadFile(JSON.parse(response?.data.result));
+      }
+
       handleReload();
     })
     .catch((error) => {
